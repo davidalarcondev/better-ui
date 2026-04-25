@@ -1,0 +1,49 @@
+
+# Actual CLI Surface (Commands & Purpose)
+
+This document describes the primary commands available in the CLI, what they do, and common flags. Use this as a quick reference for automation or development.
+
+Key commands (brief):
+
+- The CLI is slash-only at the top level. Use `/scan`, `/doctor`, `/menu`, and similar forms.
+
+- `scan` — Runs scanners across the project and produces a report.
+  - Formats: `json` (default), `markdown`, `html` (`--format`)
+  - Output: `--out <path>`; also writes snapshot to `.better-ui/history/latest.json`
+  - Scope flags: `--changed`, `--staged` to limit to git diffs.
+
+- `fix` — Applies autofixes or previews. Dry-run by default.
+  - `--apply` to write ESLint autofixes to disk.
+  - `--interactive` starts a hunk-level interactive selection flow.
+
+- `health` — Builds a numeric health score and category summaries (uses `src/insights.ts`).
+
+- `doctor` — Runs project readiness checks (config, scripts, typical pitfalls) and reports suggestions.
+
+- `check-accessibility` — Filters scan results to accessibility-related findings.
+
+- `explain` — Converts raw findings into human-friendly why/fix/risk guidance (uses `src/explanations.ts`).
+
+- `review` — Git-aware review flows. Common flags: `--changed`, `--staged`.
+
+- `pr-summary` — Produces a PR-ready markdown summary of changed files and high-priority findings.
+
+- `compare` — Compares current scan against last snapshot stored in `.better-ui/history`.
+
+- `hotspots` — Outputs files ranked by combined severity/volume to help prioritize fixes.
+
+- `images` — Scans images and can generate `.webp` variants. Use `--generate` to create webp files.
+
+- `init` — Bootstraps `better-ui.config.json` and can inject `better-ui:*` scripts into `package.json`. Supports presets: `react`, `next`, `vite`, `vue`, `design-system`, `landing-page`, `typescript-library`.
+
+- `tui` / `/menu` — Starts the interactive terminal UI (prompt-first command center, command palette, dashboards, review flows).
+
+Slash aliases:
+
+- The CLI supports slash-style aliases via `src/slashCommands.ts` and rejects non-slash top-level invocations.
+- Every primary menu action in the TUI has a slash equivalent. The explicit aliases are: `/scan`, `/changed`, `/staged`, `/fix`, `/fix-preview`, `/fix-apply`, `/fix-interactive`, `/health`, `/doctor`, `/hotspots`, `/a11y`, `/review`, `/review-changed`, `/review-staged`, `/pr-summary`, `/compare`, `/explain`, `/images`, `/init`, `/menu`, `/commands`, `/help`, and `/exit`.
+
+Notes for automation and AI agents:
+
+- The output formats are deterministic JSON/Markdown/HTML; automated consumers should prefer JSON for machine parsing.
+- When applying fixes automatically, prefer creating a branch or making a reviewable PR. `fix --interactive` is safer because it limits writes to selected hunks.
