@@ -1,15 +1,13 @@
 import fs from "fs";
-import { ScanReport, FileReport } from "../types";
+import path from "path";
+import { resolveProjectPath } from "../projectPaths";
+import { FileReport, ScanReport } from "../types";
+import { buildScanReport } from "./reportUtils";
 
-export function writeJsonReport(outPath: string, files: FileReport[]) {
-  const errors = files.reduce((s, f) => s + f.errorCount, 0);
-  const warnings = files.reduce((s, f) => s + f.warningCount, 0);
+export function writeJsonReport(projectRoot: string, outPath: string, reportOrFiles: ScanReport | FileReport[]) {
+  const report = Array.isArray(reportOrFiles) ? buildScanReport(reportOrFiles) : reportOrFiles;
+  const safeOutPath = resolveProjectPath(projectRoot, outPath, "JSON report output");
 
-  const report: ScanReport = {
-    generatedAt: new Date().toISOString(),
-    summary: { errors, warnings },
-    files
-  };
-
-  fs.writeFileSync(outPath, JSON.stringify(report, null, 2), { encoding: "utf8" });
+  fs.mkdirSync(path.dirname(safeOutPath), { recursive: true });
+  fs.writeFileSync(safeOutPath, JSON.stringify(report, null, 2), { encoding: "utf8" });
 }
