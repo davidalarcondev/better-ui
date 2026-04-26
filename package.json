@@ -26,7 +26,9 @@
     "build": "tsc",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "verify": "npm run typecheck && npm run lint && npm run build",
+    "test": "vitest",
+    "test:ci": "vitest run",
+    "verify": "npm run typecheck && npm run lint && npm run test:ci && npm run build",
     "smoke:commands": "ts-node src/cli.ts /commands",
     "smoke:scan": "ts-node src/cli.ts /scan --format json --out tmp-report.json",
     "pack:dry-run": "npm pack --dry-run",
@@ -67,7 +69,8 @@
     "commander": "^14.0.3",
     "eslint": "^10.2.1",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.5"
   },
   "dependencies": {
     "enquirer": "^2.4.1",

@@ -1,4 +1,4 @@
-const SLASH_ALIASES: Record<string, string[]> = {
+export const SLASH_ALIASES: Record<string, string[]> = {
   "/menu": ["tui"],
   "/help": ["commands"],
   "/commands": ["commands"],
