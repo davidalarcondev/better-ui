@@ -8,6 +8,7 @@ Core commands:
 - Install dependencies: `npm install`
 - Typecheck (quick check, no emit): `npx tsc --noEmit`
 - Lint repository: `npx eslint .`
+- Run the automated test suite: `npm run test:ci`
 - Build distributable CLI: `npm run build` (produces `dist/` and updates `bin/better-ui.js`)
 - Run commands in development directly with ts-node: `npx ts-node src/cli.ts <command>`
 - Slash CLI entrypoint (equivalent): `npx ts-node src/cli.ts /scan`
@@ -21,5 +22,5 @@ Notes and verification:
 
 For automated agents:
 
-- When running tests or behavior checks in CI, replicate these commands in the same order: install → typecheck → lint → build (if validating packaging).
+- When running tests or behavior checks in CI, replicate these commands in the same order: install → typecheck → lint → test → build (if validating packaging).
 - Always ensure any write actions performed by automation obey the path-safety helpers in `src/projectPaths.ts`.

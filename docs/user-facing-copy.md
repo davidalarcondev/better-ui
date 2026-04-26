@@ -3,7 +3,9 @@
 
 Branding and naming:
 
-- Use `better-ui` consistently as the product name across the TUI, CLI commands, docs, and examples. Avoid using legacy names such as `Project Doctor`.
+- Use `better-ui` as the product and repository name in prose, headings, and TUI branding.
+- Use `better-ui-cli` for npm package references, install instructions, and shell command examples.
+- Avoid using legacy names such as `Project Doctor`.
 
 Tone and language:
 

@@ -3,6 +3,8 @@
 
 This document describes the primary commands available in the CLI, what they do, and common flags. Use this as a quick reference for automation or development.
 
+The repository and product name are `better-ui`. The published npm package and executable are `better-ui-cli`.
+
 Key commands (brief):
 
 - The CLI is slash-only at the top level. Use `/scan`, `/doctor`, `/menu`, and similar forms.

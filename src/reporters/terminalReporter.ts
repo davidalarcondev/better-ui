@@ -38,5 +38,5 @@ export function printSummary(report: ScanReport) {
     console.log(chalk.dim(`\nCategories: ${categories}`));
   }
 
-  console.log(chalk.dim("\nUse `better-ui /health`, `better-ui /review --changed`, or `better-ui /menu` for richer workflows."));
+  console.log(chalk.dim("\nUse `better-ui-cli /health`, `better-ui-cli /review --changed`, or `better-ui-cli /menu` for richer workflows."));
 }

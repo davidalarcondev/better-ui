@@ -23,7 +23,7 @@
     "health": "ts-node src/cli.ts /health",
     "doctor": "ts-node src/cli.ts /doctor",
     "a11y": "ts-node src/cli.ts /a11y",
-    "build": "tsc",
+    "build": "node -e \"require('fs').rmSync('dist',{ recursive: true, force: true })\" && tsc",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest",

@@ -55,10 +55,10 @@ export function normalizeSlashArgv(argv: string[]) {
   // Enforce "slash-only" global policy: the first command argument must start with '/'
   if (!firstArg.startsWith("/")) {
     // Provide a short, actionable error and exit. This enforces that all invocations use the
-    // slash-prefixed form (eg. `better-ui /scan`). We call process.exit here because this
+    // slash-prefixed form (eg. `better-ui-cli /scan`). We call process.exit here because this
     // function runs very early in CLI startup and it's the simplest enforcement point.
     console.error("Error: this CLI accepts only slash commands. Run commands that start with '/'.");
-    console.error("Example: better-ui /scan --format json --out tmp-report.json");
+    console.error("Example: better-ui-cli /scan --format json --out tmp-report.json");
     // Use an explicit non-zero exit code to indicate misuse
     process.exit(2);
   }

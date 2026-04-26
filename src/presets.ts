@@ -15,8 +15,8 @@ export const PRESETS: Preset[] = [
     description: "Typical React app (CRA / Vite / Next)",
     reportFile: "better-ui-report.json",
     extensions: [".js", ".jsx", ".ts", ".tsx"],
-    scanCommand: "better-ui /scan",
-    fixCommand: "better-ui /fix --apply"
+    scanCommand: "better-ui-cli /scan",
+    fixCommand: "better-ui-cli /fix --apply"
   },
   {
     id: "next",
@@ -24,8 +24,8 @@ export const PRESETS: Preset[] = [
     description: "Next.js application conventions",
     reportFile: "better-ui-report.json",
     extensions: [".js", ".jsx", ".ts", ".tsx"],
-    scanCommand: "better-ui /scan",
-    fixCommand: "better-ui /fix --apply"
+    scanCommand: "better-ui-cli /scan",
+    fixCommand: "better-ui-cli /fix --apply"
   },
   {
     id: "vite",
@@ -33,8 +33,8 @@ export const PRESETS: Preset[] = [
     description: "Vite-powered app",
     reportFile: "better-ui-report.json",
     extensions: [".js", ".jsx", ".ts", ".tsx"],
-    scanCommand: "better-ui /scan",
-    fixCommand: "better-ui /fix --apply"
+    scanCommand: "better-ui-cli /scan",
+    fixCommand: "better-ui-cli /fix --apply"
   },
   {
     id: "landing-page",
@@ -42,8 +42,8 @@ export const PRESETS: Preset[] = [
     description: "Simple static landing page projects",
     reportFile: "better-ui-report.json",
     extensions: [".js", ".jsx"],
-    scanCommand: "better-ui /scan",
-    fixCommand: "better-ui /fix --apply"
+    scanCommand: "better-ui-cli /scan",
+    fixCommand: "better-ui-cli /fix --apply"
   },
   {
     id: "typescript-library",
@@ -51,8 +51,8 @@ export const PRESETS: Preset[] = [
     description: "Library published in TypeScript",
     reportFile: "better-ui-report.json",
     extensions: [".ts", ".tsx"],
-    scanCommand: "better-ui /scan",
-    fixCommand: "better-ui /fix --apply"
+    scanCommand: "better-ui-cli /scan",
+    fixCommand: "better-ui-cli /fix --apply"
   }
 ];
 

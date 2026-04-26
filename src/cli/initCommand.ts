@@ -94,13 +94,13 @@ export async function runInit(projectRoot: string, options?: { preset?: string }
         pkg.scripts = pkg.scripts || {};
         pkg.scripts["better-ui:scan"] = responses.scanCmd;
         pkg.scripts["better-ui:fix"] = responses.fixCmd;
-        pkg.scripts["better-ui:health"] = "better-ui /health";
-        pkg.scripts["better-ui:doctor"] = "better-ui /doctor";
-        pkg.scripts["better-ui:a11y"] = "better-ui /a11y";
-        pkg.scripts["better-ui:review"] = "better-ui /review --changed";
-        pkg.scripts["better-ui:pr-summary"] = "better-ui /pr-summary --out pr-summary.md";
-        pkg.scripts["better-ui:init"] = "better-ui init";
-        pkg.scripts["better-ui:tui"] = "better-ui /menu";
+        pkg.scripts["better-ui:health"] = "better-ui-cli /health";
+        pkg.scripts["better-ui:doctor"] = "better-ui-cli /doctor";
+        pkg.scripts["better-ui:a11y"] = "better-ui-cli /a11y";
+        pkg.scripts["better-ui:review"] = "better-ui-cli /review --changed";
+        pkg.scripts["better-ui:pr-summary"] = "better-ui-cli /pr-summary --out pr-summary.md";
+        pkg.scripts["better-ui:init"] = "better-ui-cli /init";
+        pkg.scripts["better-ui:tui"] = "better-ui-cli /menu";
         fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), "utf8");
         console.log("Added scripts to package.json: better-ui:scan, better-ui:fix, better-ui:health, better-ui:doctor, better-ui:a11y, better-ui:review, better-ui:pr-summary, better-ui:init, better-ui:tui");
       } catch (err) {

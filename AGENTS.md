@@ -37,7 +37,7 @@ Required checklist before making changes (human or automated agent)
    - `npm run build` (when relevant)
 3. Exercise the affected flow to verify behavior. Examples:
    - `npx ts-node src/cli.ts /scan --format json --out tmp-report.json`
-   - `npx ts-node src/cli.ts fix --interactive`
+   - `npx ts-node src/cli.ts /fix --interactive`
 4. If the change writes files, review `src/projectPaths.ts` and ensure all target paths go through the helper functions.
 5. Do not modify files outside the project tree or commit secrets.
 
@@ -68,6 +68,7 @@ Where to modify code depending on the change type
 - TUI palette behavior: `docs/tui-command-palette.md` documents the command palette hotkey, selection flow, and exit behavior.
 - Open source direction: `docs/open-source-roadmap.md` documents the current product posture, priorities, and contributor direction.
 - Distribution and install flow: `docs/distribution-and-installation.md` documents the supported binary entrypoint and publish expectations.
+- Testing and CI: `docs/testing-and-ci.md` documents the expected local verification and package checks.
 
 Quick verification commands
 
@@ -76,7 +77,7 @@ Quick verification commands
 - `npx eslint .`
 - `npm run build`
 - `npx ts-node src/cli.ts /scan --format json --out tmp.json`
-- `npx ts-node src/cli.ts fix --interactive`
+- `npx ts-node src/cli.ts /fix --interactive`
 
 Security considerations and operational limits
 

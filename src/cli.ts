@@ -369,7 +369,7 @@ program
   .action(async (opts: { preset?: string }) => {
     try {
       const result = await runInit(process.cwd(), opts);
-      console.log("\nSetup complete. Try `better-ui /menu` for the command center or `better-ui /scan` to generate a report.");
+      console.log("\nSetup complete. Try `better-ui-cli /menu` for the command center or `better-ui-cli /scan` to generate a report.");
       if (result?.openTui) {
         await runTui();
       }
@@ -433,7 +433,7 @@ program
 
 const normalizedArgv = normalizeSlashArgv(process.argv);
 
-// Bare `better-ui` opens the command center. Any explicit action beyond that must still use
+// Bare `better-ui-cli` opens the command center. Any explicit action beyond that must still use
 // a slash-prefixed command so the public CLI stays slash-first.
 if (normalizedArgv.length <= 2) {
   program.parseAsync([process.argv[0], process.argv[1], "menu"]);

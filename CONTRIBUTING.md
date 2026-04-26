@@ -16,6 +16,7 @@ Read these files first:
 npm install
 npm run typecheck
 npm run lint
+npm run test:ci
 npm run build
 ```
 
@@ -49,6 +50,7 @@ npx ts-node src/cli.ts /scan --format json --out tmp-report.json
 - [ ] I read `instructions.md`, `AGENTS.md`, and the relevant docs.
 - [ ] I ran `npm run typecheck`.
 - [ ] I ran `npm run lint`.
+- [ ] I ran `npm run test:ci`.
 - [ ] I ran `npm run build`.
 - [ ] I updated `README.md` if behavior changed.
 - [ ] I added or updated a focused document under `docs/` if needed.

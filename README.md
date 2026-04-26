@@ -1,8 +1,12 @@
 # better-ui
 
+![better-ui header](assets/better-ui.png)
+
 `better-ui` is an open source local frontend command center for scanning projects, scoring health, reviewing changed files, spotting hotspots, and optimizing images from the terminal.
 
-It supports direct slash commands such as `better-ui /scan`, `better-ui /health`, and `better-ui /menu`, plus a richer TUI designed around a dashboard-and-command-palette workflow.
+The repository and product name are `better-ui`. The published npm package and executable are `better-ui-cli`.
+
+It supports direct slash commands such as `better-ui-cli /scan`, `better-ui-cli /health`, and `better-ui-cli /menu`, plus a richer TUI designed around a dashboard-and-command-palette workflow.
 
 All repository documentation is in English. The detailed sections referenced from this README were split into the `docs/` directory. See `AGENTS.md` for the quick index and read `instructions.md` in the project root before adding new features or docs.
 
@@ -12,6 +16,7 @@ All repository documentation is in English. The detailed sections referenced fro
 - Repository instructions: `instructions.md`
 - Open source roadmap: `docs/open-source-roadmap.md`
 - Distribution and installation: `docs/distribution-and-installation.md`
+- Testing and CI: `docs/testing-and-ci.md`
 - Security notes: `docs/security-notes.md`
 
 The goal is to make `better-ui` broadly useful for frontend developers while staying honest about current limits and keeping the core tool local-first and reviewable.
@@ -33,21 +38,28 @@ The goal is to make `better-ui` broadly useful for frontend developers while sta
 
 ## Main workflows
 
-### Run in any project
+### Install and run in any project
 
-Once published, the intended professional usage is:
+Install globally if you want the command available everywhere:
 
 ```bash
-npx better-ui
-npx better-ui /menu
-npx better-ui /scan
-npm exec better-ui -- /health
-pnpm dlx better-ui /review --changed
+npm install -g better-ui-cli
+better-ui-cli /menu
+```
+
+Or run it on demand without a global install:
+
+```bash
+npx better-ui-cli
+npx better-ui-cli /menu
+npx better-ui-cli /scan
+npm exec better-ui-cli -- /health
+pnpm dlx better-ui-cli /review --changed
 ```
 
 Behavior rules:
 
-- `better-ui` with no arguments opens the command center.
+- `better-ui-cli` with no arguments opens the command center.
 - Any explicit action beyond opening the menu must still use slash commands such as `/scan`, `/health`, or `/review --changed`.
 - Non-slash top-level commands remain rejected on purpose.
 
@@ -102,21 +114,21 @@ That source form is only for working inside the `better-ui` repository itself.
 
 The CLI is slash-only. Use commands such as:
 
-- `better-ui`
-- `better-ui /scan`
-- `better-ui /fix`
-- `better-ui /health`
-- `better-ui /doctor`
-- `better-ui /hotspots`
-- `better-ui /a11y`
-- `better-ui /review`
-- `better-ui /pr-summary`
-- `better-ui /compare`
-- `better-ui /explain`
-- `better-ui /images`
-- `better-ui /init`
-- `better-ui /menu`
-- `better-ui /commands`
+- `better-ui-cli`
+- `better-ui-cli /scan`
+- `better-ui-cli /fix`
+- `better-ui-cli /health`
+- `better-ui-cli /doctor`
+- `better-ui-cli /hotspots`
+- `better-ui-cli /a11y`
+- `better-ui-cli /review`
+- `better-ui-cli /pr-summary`
+- `better-ui-cli /compare`
+- `better-ui-cli /explain`
+- `better-ui-cli /images`
+- `better-ui-cli /init`
+- `better-ui-cli /menu`
+- `better-ui-cli /commands`
 
 ## Slash commands
 
@@ -147,18 +159,18 @@ Inside the TUI, `/exit` is available to leave the command center directly.
 Examples:
 
 ```bash
-better-ui /scan --changed
-better-ui /scan --format html --out report.html
-better-ui /fix --interactive
-better-ui /fix --apply
-better-ui /doctor
-better-ui /a11y --changed
-better-ui /review --staged --out review.md
-better-ui /pr-summary --out pr-summary.md
-better-ui /explain report.json
-better-ui /images --generate
-better-ui
-better-ui /menu
+better-ui-cli /scan --changed
+better-ui-cli /scan --format html --out report.html
+better-ui-cli /fix --interactive
+better-ui-cli /fix --apply
+better-ui-cli /doctor
+better-ui-cli /a11y --changed
+better-ui-cli /review --staged --out review.md
+better-ui-cli /pr-summary --out pr-summary.md
+better-ui-cli /explain report.json
+better-ui-cli /images --generate
+better-ui-cli
+better-ui-cli /menu
 ```
 
 ## Reports and scoring
@@ -184,9 +196,9 @@ Supported formats:
 Examples:
 
 ```bash
-better-ui /scan --format json --out report.json
-better-ui /scan --format markdown --out report.md
-better-ui /scan --format html --out report.html
+better-ui-cli /scan --format json --out report.json
+better-ui-cli /scan --format markdown --out report.md
+better-ui-cli /scan --format html --out report.html
 ```
 
 `health` adds:
@@ -213,7 +225,7 @@ better-ui /scan --format html --out report.html
 
 ## Git-aware workflows
 
-When the current directory is a git repository, `better-ui` can scope work to the current diff.
+When the current directory is a git repository, `better-ui-cli` can scope work to the current diff.
 
 - `/changed` scans modified, staged, and untracked files.
 - `/staged` scans only staged files.
@@ -224,7 +236,7 @@ When the current directory is a git repository, `better-ui` can scope work to th
 
 ## TUI
 
-`better-ui /menu` opens the interactive command center.
+`better-ui-cli /menu` opens the interactive command center.
 
 When the TUI starts, it renders an oversized branded banner before the workspace panels.
 The command center is now prompt-first: you type slash commands directly, and `Ctrl+Shift+S` opens a selectable command palette.
@@ -248,7 +260,7 @@ Every primary action exposed in the TUI has a slash-command equivalent. The TUI 
 
 ## Configuration
 
-`better-ui /init` creates `better-ui.config.json`.
+`better-ui-cli /init` creates `better-ui.config.json`.
 
 You can also start with presets:
 
@@ -263,7 +275,7 @@ You can also start with presets:
 Example:
 
 ```bash
-better-ui /init --preset next
+better-ui-cli /init --preset next
 ```
 
 Example:
@@ -277,8 +289,8 @@ Example:
     "extensions": [".js", ".jsx", ".ts", ".tsx"]
   },
   "scripts": {
-    "scan": "better-ui /scan --format html --out next-report.html",
-    "fix": "better-ui /fix --interactive"
+    "scan": "better-ui-cli /scan --format html --out next-report.html",
+    "fix": "better-ui-cli /fix --interactive"
   }
 }
 ```
@@ -309,7 +321,7 @@ node bin/better-ui.js /help
 
 ## Current limitations
 
-- No automated tests yet.
+- Automated tests exist, but coverage is still narrow compared with the full CLI and TUI surface.
 - The UI heuristics are intentionally simple and best-effort, not a full AST-based accessibility engine.
 - `fix --apply` only writes what ESLint can autofix.
 - `fix --interactive` is line-diff based and not yet a full git-style patch engine.
