@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Entry that loads the compiled CLI. During development use ts-node src/cli.ts
 try {
-  require("../dist/bin/doctor.js");
+  require("../dist/src/cli.js");
 } catch (err) {
   if (!(err instanceof Error) || !("code" in err) || (err as NodeJS.ErrnoException).code !== "MODULE_NOT_FOUND") {
     throw err;

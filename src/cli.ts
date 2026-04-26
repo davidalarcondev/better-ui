@@ -433,11 +433,10 @@ program
 
 const normalizedArgv = normalizeSlashArgv(process.argv);
 
-// If normalizeSlashArgv returned an argv array (it may exit the process if enforcement fails),
-// pass it through to commander. When no arguments were provided, keep the existing behavior
-// which shows help.
+// Bare `better-ui` opens the command center. Any explicit action beyond that must still use
+// a slash-prefixed command so the public CLI stays slash-first.
 if (normalizedArgv.length <= 2) {
-  program.help();
+  program.parseAsync([process.argv[0], process.argv[1], "menu"]);
 } else {
   program.parseAsync(normalizedArgv);
 }

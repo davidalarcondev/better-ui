@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 try {
-  require("../dist/bin/doctor.js");
+  require("../dist/src/cli.js");
 } catch (err) {
   if (!err || err.code !== "MODULE_NOT_FOUND") {
     throw err;

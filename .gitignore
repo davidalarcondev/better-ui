@@ -2,3 +2,9 @@ node_modules/
 dist/
 report.json
 *.log
+.better-ui/
+tmp-report.json
+report.html
+report.md
+pr-summary.md
+review.md

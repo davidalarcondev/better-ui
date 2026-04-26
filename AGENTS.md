@@ -66,6 +66,8 @@ Where to modify code depending on the change type
 - Update the TUI: edit `src/tui/app.ts` and supporting UI helpers; keep user-facing copy aligned with `docs/user-facing-copy.md`.
 - TUI slash parity reference: `docs/tui-slash-actions.md` documents the expected mapping between menu actions and slash commands.
 - TUI palette behavior: `docs/tui-command-palette.md` documents the command palette hotkey, selection flow, and exit behavior.
+- Open source direction: `docs/open-source-roadmap.md` documents the current product posture, priorities, and contributor direction.
+- Distribution and install flow: `docs/distribution-and-installation.md` documents the supported binary entrypoint and publish expectations.
 
 Quick verification commands
 

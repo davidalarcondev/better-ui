@@ -1,11 +1,22 @@
 {
-  "name": "better-ui",
-  "version": "0.2.0",
-  "private": true,
-  "description": "CLI tool to scan a project and produce frontend improvement reports",
-  "main": "dist/bin/doctor.js",
+  "name": "better-ui-cli",
+  "version": "0.3.0",
+  "private": false,
+  "description": "Open source terminal command center for frontend scanning, review, and safe fixes",
+  "main": "dist/src/cli.js",
+  "files": [
+    "bin",
+    "dist",
+    "README.md",
+    "LICENSE",
+    "SECURITY.md",
+    "CONTRIBUTING.md"
+  ],
+  "exports": {
+    ".": "./dist/src/cli.js"
+  },
   "bin": {
-    "better-ui": "bin/better-ui.js"
+    "better-ui-cli": "bin/better-ui.js"
   },
   "scripts": {
     "scan": "ts-node src/cli.ts /scan",
@@ -15,11 +26,38 @@
     "build": "tsc",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "start": "node ./dist/bin/doctor.js"
+    "verify": "npm run typecheck && npm run lint && npm run build",
+    "smoke:commands": "ts-node src/cli.ts /commands",
+    "smoke:scan": "ts-node src/cli.ts /scan --format json --out tmp-report.json",
+    "pack:dry-run": "npm pack --dry-run",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run verify",
+    "start": "node ./bin/better-ui.js /commands",
+    "better-ui:scan": "better-ui-cli /scan",
+    "better-ui:fix": "better-ui-cli /fix --apply",
+    "better-ui:health": "better-ui-cli /health",
+    "better-ui:doctor": "better-ui-cli /doctor",
+    "better-ui:a11y": "better-ui-cli /a11y",
+    "better-ui:review": "better-ui-cli /review --changed",
+    "better-ui:pr-summary": "better-ui-cli /pr-summary --out pr-summary.md",
+    "better-ui:init": "better-ui-cli /init",
+    "better-ui:tui": "better-ui-cli /menu"
   },
-  "keywords": [],
+  "keywords": [
+    "frontend",
+    "cli",
+    "tui",
+    "eslint",
+    "typescript",
+    "a11y",
+    "review",
+    "open-source"
+  ],
   "author": "",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/node": "^25.6.0",
     "@typescript-eslint/eslint-plugin": "^8.59.0",

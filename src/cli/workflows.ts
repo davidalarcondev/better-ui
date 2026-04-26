@@ -156,7 +156,8 @@ export async function runCompareWorkflow(projectRoot: string) {
 export async function runReviewWorkflow(projectRoot: string, options?: ScopeOptions & { out?: string }) {
   const scope = resolveScope(options);
   const scan = await runScanWorkflow(projectRoot, { ...options, saveHistory: false });
-  const body = buildReviewBody(scan.report, getCurrentBranch(projectRoot));
+  const branch = getCurrentBranch(projectRoot) || undefined;
+  const body = buildReviewBody(scan.report, branch);
   if (options?.out) {
     fs.writeFileSync(resolveProjectPath(projectRoot, options.out, "Review output"), body, "utf8");
   }

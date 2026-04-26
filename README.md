@@ -1,10 +1,20 @@
 # better-ui
 
-`better-ui` is a local frontend command center for scanning projects, scoring health, reviewing changed files, spotting hotspots, and optimizing images from the terminal.
+`better-ui` is an open source local frontend command center for scanning projects, scoring health, reviewing changed files, spotting hotspots, and optimizing images from the terminal.
 
 It supports direct slash commands such as `better-ui /scan`, `better-ui /health`, and `better-ui /menu`, plus a richer TUI designed around a dashboard-and-command-palette workflow.
 
 All repository documentation is in English. The detailed sections referenced from this README were split into the `docs/` directory. See `AGENTS.md` for the quick index and read `instructions.md` in the project root before adding new features or docs.
+
+## Open source project
+
+- Contribution guide: `CONTRIBUTING.md`
+- Repository instructions: `instructions.md`
+- Open source roadmap: `docs/open-source-roadmap.md`
+- Distribution and installation: `docs/distribution-and-installation.md`
+- Security notes: `docs/security-notes.md`
+
+The goal is to make `better-ui` broadly useful for frontend developers while staying honest about current limits and keeping the core tool local-first and reviewable.
 ## What it does now
 
 - Scans `js`, `jsx`, `ts`, and `tsx` files with ESLint plus TypeScript diagnostics.
@@ -22,6 +32,33 @@ All repository documentation is in English. The detailed sections referenced fro
 - Exposes every major flow through both CLI commands and slash commands.
 
 ## Main workflows
+
+### Run in any project
+
+Once published, the intended professional usage is:
+
+```bash
+npx better-ui
+npx better-ui /menu
+npx better-ui /scan
+npm exec better-ui -- /health
+pnpm dlx better-ui /review --changed
+```
+
+Behavior rules:
+
+- `better-ui` with no arguments opens the command center.
+- Any explicit action beyond opening the menu must still use slash commands such as `/scan`, `/health`, or `/review --changed`.
+- Non-slash top-level commands remain rejected on purpose.
+
+During repository development, you can still run the source entrypoint directly:
+
+```bash
+npx ts-node src/cli.ts
+npx ts-node src/cli.ts /menu
+```
+
+That source form is only for working inside the `better-ui` repository itself.
 
 1. Open the command center
 
@@ -65,6 +102,7 @@ All repository documentation is in English. The detailed sections referenced fro
 
 The CLI is slash-only. Use commands such as:
 
+- `better-ui`
 - `better-ui /scan`
 - `better-ui /fix`
 - `better-ui /health`
@@ -119,6 +157,7 @@ better-ui /review --staged --out review.md
 better-ui /pr-summary --out pr-summary.md
 better-ui /explain report.json
 better-ui /images --generate
+better-ui
 better-ui /menu
 ```
 
@@ -259,6 +298,8 @@ Example:
 
 ```bash
 npm install
+npm run verify
+npm run pack:dry-run
 npm run lint
 npm run typecheck
 npm run build
@@ -273,6 +314,7 @@ node bin/better-ui.js /help
 - `fix --apply` only writes what ESLint can autofix.
 - `fix --interactive` is line-diff based and not yet a full git-style patch engine.
 - There is no browser-based UI; the product is terminal-first.
+- The current insights and explanation engines are useful but still lightweight compared with mature enterprise analyzers.
 
 ## Important files
 
