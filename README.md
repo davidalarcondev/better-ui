@@ -319,6 +319,11 @@ npx ts-node src/cli.ts /commands
 node bin/better-ui.js /help
 ```
 
+## Release automation and CI
+
+See `docs/release-automation.md` for details on how the release workflow works, required tokens, and troubleshooting steps if a release does not run after a merge. The repository uses `googleapis/release-please-action@v4` and listens to pushes on both `main` and `master`.
+
+
 ## Current limitations
 
 - Automated tests exist, but coverage is still narrow compared with the full CLI and TUI surface.
