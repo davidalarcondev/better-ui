@@ -56,6 +56,12 @@ npx ts-node src/cli.ts /scan --format json --out tmp-report.json
 - [ ] I added or updated a focused document under `docs/` if needed.
 - [ ] I described any remaining limitations.
 
+## Release automation notes for contributors
+
+- This repository uses `release-please` to automate releases. The workflow lives in `.github/workflows/release.yml`.
+- When preparing PRs ensure the CI checks pass (typecheck, lint, tests, build). The release action runs on push to the default branch and requires a token with write permissions if you rely on `MY_RELEASE_PLEASE_TOKEN`.
+- If you want to test packaging locally, run `npm pack` to produce a `.tgz` that can be installed in another project.
+
 ## Reporting bugs and proposing features
 
 When opening an issue or PR, include:
