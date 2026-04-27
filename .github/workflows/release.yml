@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master
+  workflow_dispatch: {}
 
 permissions:
   contents: write
@@ -20,7 +21,7 @@ jobs:
         with:
           token: ${{ secrets.MY_RELEASE_PLEASE_TOKEN }}
           release-type: node
-          include-component-in-tag: true
+          #include-component-in-tag: true
 
       # If release-please created a release in this run, publish to npm.
       - name: Checkout repository
