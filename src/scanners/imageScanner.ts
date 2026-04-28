@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import sharp from "sharp";
 import { resolveProjectPath, toProjectRelativePath } from "../projectPaths";
 
 const IMAGE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg"]);
@@ -42,6 +41,9 @@ export async function generateWebP(projectRoot: string, file: string, quality = 
     throw new Error(`Unsupported image type: ${extension || "unknown"}`);
   }
 
+  // Load sharp only when WebP generation is requested so non-image commands can
+  // still start even if the native optional dependency cannot be loaded.
+  const { default: sharp } = await import("sharp");
   const out = full + ".webp";
   await sharp(full).webp({ quality: normalizedQuality }).toFile(out);
   const stat = await fs.promises.stat(out);

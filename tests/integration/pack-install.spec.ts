@@ -4,15 +4,25 @@ import fs from 'fs'
 import path from 'path'
 import os from 'os'
 
+function runNpm(args: string[], options: Parameters<typeof spawnSync>[2]) {
+  const npmCli = process.env.npm_execpath
+  if (!npmCli) {
+    throw new Error('npm_execpath is not available in the test environment')
+  }
+
+  return spawnSync(process.execPath, [npmCli, ...args], options)
+}
+
 // Integration test: ensure the package can be packed, installed in a new
 // project and that the installed binary runs without immediately failing.
 test(
   'pack -> install -> run binary',
+  { timeout: 300_000 },
   () => {
     const repoRoot = process.cwd()
 
     // Run npm pack (prepack runs the build)
-    const pack = spawnSync('npm', ['pack'], { encoding: 'utf8', timeout: 120_000 })
+    const pack = runNpm(['pack'], { encoding: 'utf8', timeout: 120_000 })
     if (pack.error) throw pack.error
     expect(pack.status).toBe(0)
 
@@ -26,12 +36,11 @@ test(
 
     // Create temporary project
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'better-ui-test-'))
-    const init = spawnSync('npm', ['init', '-y'], { cwd: tmp, encoding: 'utf8', timeout: 120_000 })
+    const init = runNpm(['init', '-y'], { cwd: tmp, encoding: 'utf8', timeout: 120_000 })
     expect(init.status).toBe(0)
 
     // Install the packed tarball
-    const install = spawnSync(
-      'npm',
+    const install = runNpm(
       ['install', tarballPath, '--no-audit', '--no-fund'],
       { cwd: tmp, encoding: 'utf8', timeout: 240_000 }
     )
@@ -45,10 +54,15 @@ test(
     // Run the binary to ensure it starts and exits successfully for a simple command
     const run = spawnSync('node', [installedBin, '/commands'], { cwd: tmp, encoding: 'utf8', timeout: 30_000 })
     if (run.error) throw run.error
-    expect(run.status).toBe(0)
+    if (run.status !== 0) {
+      throw new Error([
+        `Installed binary exited with code ${String(run.status)}`,
+        `stdout:\n${run.stdout || '(empty)'}`,
+        `stderr:\n${run.stderr || '(empty)'}`
+      ].join('\n\n'))
+    }
 
     // Cleanup tarball
     try { fs.unlinkSync(tarballPath) } catch (e) { /* ignore */ }
-  },
-  { timeout: 300_000 }
+  }
 )
