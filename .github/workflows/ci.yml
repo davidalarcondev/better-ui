@@ -22,7 +22,7 @@ jobs:
   verify:
     name: Verify (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -48,8 +48,12 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Run tests
+      - name: Run unit tests
         run: npm run test:ci
+
+      - name: Run integration tests
+        run: npm run test:integration
+        # Integration tests may require more time (npm pack, install in temp dir)
 
       - name: Build project
         run: npm run build

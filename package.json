@@ -28,6 +28,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:ci": "vitest run",
+    "test:integration": "vitest run tests/integration --reporter verbose",
     "verify": "npm run typecheck && npm run lint && npm run test:ci && npm run build",
     "smoke:commands": "ts-node src/cli.ts /commands",
     "smoke:scan": "ts-node src/cli.ts /scan --format json --out tmp-report.json",
