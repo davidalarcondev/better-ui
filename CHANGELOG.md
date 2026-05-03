@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0](https://github.com/davidalarcondev/better-ui/compare/v0.3.1...v1.0.0) (2026-05-03)
+
+
+### Features
+
+* prepare better-ui 1.0 release ([ae2dd9a](https://github.com/davidalarcondev/better-ui/commit/ae2dd9a1ea5a264751006dbdf309e73b9e08a67e))
+
 ## [0.3.1](https://github.com/davidalarcondev/better-ui/compare/v0.3.0...v0.3.1) (2026-04-28)
 
 ### Bug Fixes
