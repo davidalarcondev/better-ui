@@ -13,6 +13,7 @@ Key commands (brief):
   - Formats: `json` (default), `markdown`, `html` (`--format`)
   - Output: `--out <path>`; also writes snapshot to `.better-ui/history/latest.json`
   - Scope flags: `--changed`, `--staged` to limit to git diffs.
+  - Advanced flags: `--skip-history`, `--top <n>`, `--scan-images`, `--open`
 
 - `fix` — Applies autofixes or previews. Dry-run by default.
   - `--apply` to write ESLint autofixes to disk.
@@ -21,6 +22,10 @@ Key commands (brief):
 - `health` — Builds a numeric health score and category summaries (uses `src/insights.ts`).
 
 - `doctor` — Runs project readiness checks (config, scripts, typical pitfalls) and reports suggestions.
+
+- `deps` — Finds unused dependencies and warns about known heavy frontend libraries.
+
+- `advanced` — Shows the built-in cheat sheet for advanced flags, follow-up flows, and high-leverage commands.
 
 - `check-accessibility` — Filters scan results to accessibility-related findings.
 
@@ -43,7 +48,7 @@ Key commands (brief):
 Slash aliases:
 
 - The CLI supports slash-style aliases via `src/slashCommands.ts` and rejects non-slash top-level invocations.
-- Every primary menu action in the TUI has a slash equivalent. The explicit aliases are: `/scan`, `/changed`, `/staged`, `/fix`, `/fix-preview`, `/fix-apply`, `/fix-interactive`, `/health`, `/doctor`, `/hotspots`, `/a11y`, `/review`, `/review-changed`, `/review-staged`, `/pr-summary`, `/compare`, `/explain`, `/images`, `/init`, `/menu`, `/commands`, `/help`, and `/exit`.
+- Every primary menu action in the TUI has a slash equivalent. The explicit aliases are: `/scan`, `/changed`, `/staged`, `/fix`, `/fix-preview`, `/fix-apply`, `/fix-interactive`, `/health`, `/doctor`, `/hotspots`, `/a11y`, `/review`, `/review-changed`, `/review-staged`, `/pr-summary`, `/compare`, `/deps`, `/explain`, `/images`, `/init`, `/advanced`, `/menu`, `/commands`, `/help`, and `/exit`.
 
 Notes for automation and AI agents:
 

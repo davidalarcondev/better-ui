@@ -2,6 +2,8 @@ import { Command } from "commander";
 import path from "path";
 import chalk from "chalk";
 import { prompt } from "enquirer";
+import fs from "fs";
+import { exec } from "child_process";
 import { COMMANDS } from "./commandCatalog";
 import { runInit } from "./cli/initCommand";
 import {
@@ -23,8 +25,9 @@ import { buildHotspots } from "./insights";
 import { printSummary } from "./reporters/terminalReporter";
 import { scanImages, generateWebP } from "./scanners/imageScanner";
 import { normalizeSlashArgv } from "./slashCommands";
-import { printBanner, printCommandCatalog, printPanel, formatDelta } from "./terminalUi";
+import { printBanner, printCommandCatalog, printPanel, formatDelta, printGrid } from "./terminalUi";
 import { runTui } from "./tui/app";
+import { scanDependencies } from "./scanners/dependencyScanner";
 
 function parseExtensions(value?: string) {
   return value ? value.split(",").map(segment => segment.trim()).filter(Boolean) : undefined;
@@ -51,24 +54,127 @@ addScopeOptions(
     .option("--out <file>", "Report file")
     .option("--ext <exts>", "Comma-separated extensions (eg. .js,.ts)")
     .option("--format <format>", "json, markdown, or html", "json")
-    .action(async (opts: { out?: string; ext?: string; changed?: boolean; staged?: boolean; format?: "json" | "markdown" | "html" }) => {
+    .option("--skip-history", "Do not save a history snapshot to .better-ui/history")
+    .option("--top <n>", "Number of hotspots to show", (v) => parseInt(v, 10), 5)
+    .option("--open", "Open the generated HTML report with the system default application")
+    .option("--scan-images", "Also scan images and show an image summary")
+    .option("--verbose", "Show extended output after the scan")
+    .action(async (opts: any) => {
+      // opts is 'any' here to avoid over-specific typing for the extended options
       try {
         const projectRoot = process.cwd();
+        const start = Date.now();
+
         const result = await runScanWorkflow(projectRoot, {
           out: opts.out,
           ext: parseExtensions(opts.ext),
           changed: opts.changed,
           staged: opts.staged,
-          format: opts.format
+          format: opts.format,
+          // only pass saveHistory=false when user explicitly asked to skip
+          saveHistory: opts.skipHistory ? false : undefined
         });
+
+        const durationMs = Date.now() - start;
+
+        // compute extra metrics
+        const fixableCount = result.report.files.reduce((sum, f) => sum + f.messages.filter((m: any) => m.fixable).length, 0);
+        const top = Number.isFinite(opts.top) ? Math.max(1, opts.top) : 5;
+        const hotspots = buildHotspots(result.report, top);
+
+        const fixableFiles = result.report.files
+          .map(f => ({ filePath: f.filePath, fixables: f.messages.filter((m: any) => m.fixable).length }))
+          .filter(x => x.fixables > 0)
+          .sort((a, b) => b.fixables - a.fixables)
+          .slice(0, Math.max(5, top));
+
+        const categories = Object.entries(result.report.summary.categories || {}).sort((a: any, b: any) => (b[1] as number) - (a[1] as number));
+
+        // report file size (if written)
+        let reportSizeText = "unknown";
+        try {
+          if (result.reportPath && fs.existsSync(result.reportPath)) {
+            const st = fs.statSync(result.reportPath);
+            reportSizeText = `${Math.round(st.size / 1024)} KB`;
+          }
+        } catch {
+          // ignore
+        }
 
         printBanner();
         printSummary(result.report);
+
         printPanel("Scan Output", [
           `${chalk.cyan("Scope:")} ${result.report.scope || "all"}`,
-          `${chalk.cyan("Saved report:")} ${path.resolve(result.reportPath)}`,
-          `${chalk.cyan("History snapshot:")} ${result.snapshotPath ? path.resolve(result.snapshotPath) : "disabled"}`
+          `${chalk.cyan("Saved report:")} ${result.reportPath ? path.resolve(result.reportPath) : "(not written)"}`,
+          `${chalk.cyan("History snapshot:")} ${result.snapshotPath ? path.resolve(result.snapshotPath) : "disabled"}`,
+          `${chalk.cyan("Report size:")} ${reportSizeText}`,
+          `${chalk.cyan("Duration:")} ${(durationMs / 1000).toFixed(2)}s`,
+          `${chalk.cyan("Files with issues:")} ${result.report.summary.filesWithIssues}`,
+          `${chalk.cyan("Total issues:")} ${result.report.summary.totalIssues}`,
+          `${chalk.cyan("Autofixable issues:")} ${fixableCount}`
         ], "cyan");
+
+        // Category breakdown
+        printPanel("Category Breakdown", categories.length > 0 ? categories.map(([name, count]) => `${chalk.cyan(String(name) + ":")} ${String(count)}`) : ["No categorized issues detected."], "blue");
+
+        // Hotspots
+        printPanel("Hotspots", hotspots.length > 0 ? hotspots.map(h => `${h.filePath}  score=${h.score}  errors=${h.errors}  warnings=${h.warnings}`) : ["No hotspots found."], "red");
+
+        // Fixable files
+        printPanel("Top Fixable Files", fixableFiles.length > 0 ? fixableFiles.map(f => `${f.filePath} (${f.fixables} autofixable)`) : ["No autofixable files found in this scan."], "yellow");
+
+        // Optionally scan images
+        if (opts.scanImages) {
+          try {
+            const images = await scanImages(projectRoot);
+            const totalKb = Math.round(images.reduce((s, i) => s + i.size, 0) / 1024);
+            printPanel("Image Inventory", [
+              `${chalk.cyan("Files:")} ${String(images.length)}`,
+              `${chalk.cyan("Total size:")} ${String(totalKb)} KB`,
+              ...images.slice(0, 8).map(image => `${image.file} (${Math.round(image.size / 1024)} KB)`)
+            ], "magenta");
+          } catch (err) {
+            console.warn("Image scan failed:", err);
+          }
+        }
+
+        // actionable suggestions
+        const suggestions: string[] = [];
+        if (fixableCount > 0) {
+          suggestions.push(`${chalk.cyan("Autofix available:")} ${fixableCount} issue(s) — run ${chalk.bold("better-ui-cli /fix --interactive")} to pick hunks or ${chalk.bold("better-ui-cli /fix --apply")} to apply all autofixes.`);
+        } else {
+          suggestions.push("No autofixable issues detected. Consider addressing errors and warnings listed above.");
+        }
+        suggestions.push(`${chalk.cyan("Review:")} ${chalk.bold("better-ui-cli /review --changed")} or ${chalk.bold("better-ui-cli /pr-summary --out pr-summary.md")}`);
+        suggestions.push(`${chalk.cyan("Health:")} ${chalk.bold("better-ui-cli /health")} for category scores and priorities.`);
+        printPanel("Next Steps", suggestions, "green");
+
+        // Optionally open generated HTML report
+        if (opts.open) {
+          if (result.reportPath && String(result.reportPath).toLowerCase().endsWith(".html")) {
+            try {
+              // platform-specific open
+              if (process.platform === "win32") {
+                exec(`start "" "${result.reportPath}"`);
+              } else if (process.platform === "darwin") {
+                exec(`open "${result.reportPath}"`);
+              } else {
+                exec(`xdg-open "${result.reportPath}"`);
+              }
+              printPanel("Opened Report", ["The HTML report was opened in your default application."], "magenta");
+            } catch (err) {
+              printPanel("Open Report", ["Could not open the report automatically. Please open the file manually:" , String(result.reportPath)], "yellow");
+            }
+          } else {
+            printPanel("Open Report", ["The --open option works only for HTML reports. Re-run with --format html or open the file manually."], "yellow");
+          }
+        }
+
+        if (opts.verbose) {
+          printPanel("Raw Report Path", [String(result.reportPath)], "cyan");
+          if (result.snapshotPath) printPanel("Snapshot Path", [String(result.snapshotPath)], "cyan");
+        }
       } catch (err) {
         console.error("Scan failed:", err);
         process.exitCode = 2;
@@ -202,21 +308,81 @@ program
   .action(async () => {
     try {
       const result = await runHealthWorkflow(process.cwd());
-       printBanner();
       printPanel("Project Health", [
-        `${chalk.cyan("Score:")} ${chalk.bold(String(result.health.score) + "/100")}`,
-        `${chalk.cyan("Errors / warnings:")} ${result.health.summary.errors} / ${result.health.summary.warnings}`,
-        `${chalk.cyan("Files with issues:")} ${String(result.health.summary.filesWithIssues)}`,
-        `${chalk.cyan("Safe autofixes:")} ${String(result.health.summary.safeAutofixes)}`,
-        `${chalk.cyan("Images:")} ${result.health.summary.images} files, ${Math.round(result.health.summary.imageBytes / 1024)} KB`
+        `${chalk.cyan("Score:")} ${result.health.score}/100`,
+        `${chalk.cyan("High impact issues:")} ${result.health.summary.highImpactIssues}`,
+        `${chalk.cyan("Safe autofixes:")} ${result.health.summary.safeAutofixes}`
       ], "magenta");
-
-      printPanel("Category Scores", Object.values(result.health.categories).map(category => `${chalk.cyan(category.label + ":")} ${category.score}/100 (${category.count} issues)`), "blue");
-      printPanel("Priorities", result.health.priorities.length > 0 ? result.health.priorities.map(priority => `${priority.label} [${priority.impact}] - ${priority.detail}`) : ["No urgent priorities detected."], "yellow");
-    } catch (err) {
-      console.error("Health command failed:", err);
-      process.exitCode = 2;
+      printPanel("Priorities", result.health.priorities.map((priority: any) => `${priority.label} - ${priority.detail}`), "blue");
+    } catch (error) {
+      console.error(chalk.red("Health check failed:"), error);
+      process.exit(1);
     }
+  });
+
+program
+  .command("deps")
+  .description("Find unused dependencies and heavy packages")
+  .action(async () => {
+    try {
+      printPanel("Dependencies", ["Scanning project for unused and heavy dependencies..."], "yellow");
+      const { unusedDependencies, heavyDependencies } = await scanDependencies(process.cwd());
+      if (unusedDependencies.length > 0) {
+        printPanel("Dead Code / Unused Dependencies", unusedDependencies.map(d => chalk.red(`- ${d}`)), "red");
+      } else {
+        printPanel("Dead Code / Unused Dependencies", ["All package.json dependencies seem to be used!"], "green");
+      }
+
+      if (heavyDependencies.length > 0) {
+        printPanel("Heavy Dependencies Detected", heavyDependencies.map(d => chalk.yellow(`- ${d.name}`)), "yellow");
+      }
+    } catch (error) {
+      console.error(chalk.red("Dependency scan failed:"), error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command("advanced")
+  .description("Show advanced subcommands, flags, and hidden pro-tips")
+  .action(() => {
+    printGrid([
+      {
+        title: "Supercharged Scan",
+        color: "cyan",
+        lines: [
+          chalk.yellow("--changed") + "       : Scan only modified/untracked files",
+          chalk.yellow("--staged") + "        : Scan only files ready to commit",
+          chalk.yellow("--scan-images") + "   : Discover heavy images during scan",
+          chalk.yellow("--format html") + "   : Generate a visual dashboard",
+          chalk.yellow("--open") + "          : Open the HTML report in your browser"
+        ]
+      },
+      {
+        title: "Surgical Fixes",
+        color: "green",
+        lines: [
+          chalk.yellow("/fix --interactive") + " : Pick diffs one by one (Space to select)",
+          chalk.yellow("/fix --apply") + "       : Auto-fix everything safely"
+        ]
+      },
+      {
+        title: "Pull Requests & Git",
+        color: "magenta",
+        lines: [
+          chalk.yellow("/review --changed") + "  : Generate a Code Review for your diff",
+          chalk.yellow("/pr-summary") + "        : Drafts the markdown for your GitHub PR"
+        ]
+      },
+      {
+        title: "Hidden Features",
+        color: "blue",
+        lines: [
+          chalk.yellow("Ctrl+Shift+S") + "       : Open the Command Palette from anywhere",
+          chalk.yellow("/images --generate") + " : Auto-convert heavy images to .webp"
+        ]
+      }
+    ]);
   });
 
 program
@@ -395,7 +561,8 @@ program
   .command("images")
   .description("Scan images and optionally generate WebP versions")
   .option("--generate", "Generate WebP files for detected images")
-  .action(async (opts: { generate?: boolean }) => {
+  .option("--quality <n>", "WebP quality from 1 to 100", (value) => parseInt(value, 10))
+  .action(async (opts: { generate?: boolean; quality?: number }) => {
     try {
       const projectRoot = process.cwd();
       const images = await scanImages(projectRoot);
@@ -417,7 +584,7 @@ program
         const results: string[] = [];
         for (const image of images) {
           try {
-        const generated = await generateWebP(projectRoot, image.file);
+            const generated = await generateWebP(projectRoot, image.file, opts.quality);
             results.push(`${generated.out} (${Math.round(generated.size / 1024)} KB)`);
           } catch (err) {
             results.push(`${image.file} (failed: ${String(err)})`);

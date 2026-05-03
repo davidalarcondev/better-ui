@@ -19,5 +19,5 @@ Notes and safety:
 How to test:
 
 1. Place a small `test.jpg` in a temporary folder inside the repo.
-2. Run: `npx ts-node src/cli.ts images --generate --quality 80`
+2. Run: `npx ts-node src/cli.ts /images --generate --quality 80`
 3. Verify that `test.jpg.webp` exists and that original remains untouched.

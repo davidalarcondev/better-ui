@@ -51,3 +51,29 @@ export function getReportFile(projectRoot: string, config: BetterUiConfig, expli
 export function getExtensions(config: BetterUiConfig, explicitExts?: string[]) {
   return explicitExts && explicitExts.length > 0 ? explicitExts : config.defaults?.extensions;
 }
+
+export function detectFramework(projectRoot: string): string[] {
+  const pkgPath = resolveProjectPath(projectRoot, "package.json", "package.json");
+  if (!fs.existsSync(pkgPath)) return ["vanilla"];
+  try {
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+    const deps = { ...pkg.dependencies, ...pkg.devDependencies };
+    const stack: string[] = [];
+    if (deps["next"]) stack.push("Next.js");
+    else if (deps["nuxt"]) stack.push("Nuxt");
+    else if (deps["@remix-run/react"]) stack.push("Remix");
+    
+    if (deps["react"] && !stack.includes("Next.js") && !stack.includes("Remix")) stack.push("React");
+    if (deps["vue"] && !stack.includes("Nuxt")) stack.push("Vue");
+    if (deps["svelte"]) stack.push("Svelte");
+    
+    if (deps["vite"]) stack.push("Vite");
+    if (deps["tailwindcss"]) stack.push("Tailwind");
+    if (deps["typescript"]) stack.push("TypeScript");
+    
+    return stack.length > 0 ? stack : ["vanilla"];
+  } catch {
+    return ["vanilla"];
+  }
+}
+
