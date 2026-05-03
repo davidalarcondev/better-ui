@@ -26,8 +26,8 @@ test(
     if (pack.error) throw pack.error
     expect(pack.status).toBe(0)
 
-    const out = (pack.stdout || '').trim()
-    const lines = out.split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
+    const out = String(pack.stdout || '').trim()
+    const lines = out.split(/\r?\n/).map((line: string) => line.trim()).filter(Boolean)
     expect(lines.length).toBeGreaterThan(0)
     const tarballName = lines[lines.length - 1]
     expect(tarballName.endsWith('.tgz')).toBeTruthy()

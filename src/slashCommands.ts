@@ -5,12 +5,14 @@ export const SLASH_ALIASES: Record<string, string[]> = {
   "/changed": ["scan", "--changed"],
   "/staged": ["scan", "--staged"],
   "/doctor": ["doctor"],
+  "/deps": ["deps"],
   "/a11y": ["check-accessibility"],
   "/review-changed": ["review", "--changed"],
   "/review-staged": ["review", "--staged"],
   "/fix-preview": ["fix"],
   "/fix-apply": ["fix", "--apply"],
   "/fix-interactive": ["fix", "--interactive"],
+  "/advanced": ["advanced"],
   "/exit": ["exit"]
 };
 

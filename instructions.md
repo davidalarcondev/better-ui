@@ -33,6 +33,12 @@ npx ts-node src/cli.ts /scan --format json --out tmp-report.json
 - Changes that add or reshape behavior must add or update a focused file under `docs/`.
 - Contributor-process changes must update `CONTRIBUTING.md` or this file.
 
+Additional requirement for new features:
+
+- Any new user-facing functionality (CLI command, flag, TUI action, reporter, scanner behavior, etc.) MUST be documented in `README.md` with a short usage example and the key options. If the feature is substantial (more than a paragraph of explanation or with multiple steps to verify), a dedicated `docs/<descriptive-name>.md` file must be added describing: what the feature does, minimal commands to test it, considerations/limitations, and any required environment or system dependencies (for example, native libraries required by `sharp`).
+
+- The author of the change must list in the PR/commit message which docs were updated (README.md and any new `docs/*.md`) and include the verification commands they ran.
+
 ## Product guardrails
 
 - Keep the product local-first.

@@ -2,7 +2,7 @@
 
 Context summary (one paragraph):
 
-better-ui is a single-package Node + TypeScript command-line tool focused on helping frontend engineers scan repositories for issues (linting, TypeScript diagnostics, accessibility heuristics), score project health, review changed files, and generate shareable reports. The project is terminal-first and intentionally lightweight: there is no monorepo layout, no CI pipeline included by default, and no automated test suite yet.
+better-ui is a single-package Node + TypeScript command-line tool focused on helping frontend engineers scan repositories for issues (linting, TypeScript diagnostics, accessibility heuristics), score project health, review changed files, and generate shareable reports. The project is terminal-first and intentionally lightweight: there is no monorepo layout, the product is local-first, and the repository includes automated verification through linting, typechecking, tests, and build checks.
 
 Goals:
 
@@ -17,7 +17,7 @@ Audience:
 Architecture overview (where to look):
 
 - CLI entry: `src/cli.ts` - maps commands to workflows and reporters.
-- Scanners: `src/scanners/` - ESLint + TypeScript diagnostics (`eslintScanner.ts`) and image tooling (`imageScanner.ts`).
+- Scanners: `src/scanners/` - ESLint + TypeScript diagnostics (`eslintScanner.ts`), image tooling (`imageScanner.ts`), and dependency analysis (`dependencyScanner.ts`).
 - Workflows: `src/cli/workflows.ts` - orchestrates scan, fix, explain, doctor flows.
 - Reporters: `src/reporters/` - json, html, and terminal reporters.
 - TUI: `src/tui/app.ts` - interactive command center.

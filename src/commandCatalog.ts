@@ -55,6 +55,18 @@ export const COMMANDS: CommandDefinition[] = [
     example: "better-ui-cli /health"
   },
   {
+    name: "deps",
+    slash: "/deps",
+    description: "Find unused dependencies and heavy packages.",
+    example: "better-ui-cli /deps"
+  },
+  {
+    name: "advanced",
+    slash: "/advanced",
+    description: "Show advanced subcommands, flags, and hidden pro-tips.",
+    example: "better-ui-cli /advanced"
+  },
+  {
     name: "doctor",
     slash: "/doctor",
     description: "Run the broad project doctor view including config and script checks.",

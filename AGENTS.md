@@ -21,7 +21,7 @@ What this repository contains (operational summary)
 - Purpose: a terminal-first tool to scan frontend code, compute a health score, generate reports, and help apply fixes with interactive workflows.
 - CLI entry: `src/cli.ts` — maps commands to workflows and reporters.
 - Workflows: `src/cli/workflows.ts` — orchestrates scan, fix, doctor, pr-summary, explain, etc.
-- Scanners: `src/scanners/` — `eslintScanner.ts` (ESLint + TypeScript diagnostics + heuristics) and `imageScanner.ts` (discover and generate WebP).
+- Scanners: `src/scanners/` — `eslintScanner.ts` (ESLint + TypeScript diagnostics + heuristics), `imageScanner.ts` (discover and generate WebP), and `dependencyScanner.ts` (unused/heavy dependency analysis).
 - Reporters: `src/reporters/` — JSON, HTML, and terminal reporters.
 - Interactive UI: `src/tui/app.ts` — Enquirer-based TUI for dashboards and review flows.
 - Path safety: `src/projectPaths.ts` — helpers that ensure all writes stay inside the project root.
@@ -69,6 +69,8 @@ Where to modify code depending on the change type
 - Open source direction: `docs/open-source-roadmap.md` documents the current product posture, priorities, and contributor direction.
 - Distribution and install flow: `docs/distribution-and-installation.md` documents the supported binary entrypoint and publish expectations.
 - Testing and CI: `docs/testing-and-ci.md` documents the expected local verification and package checks.
+- Dependency Scanner: `docs/dependency-scanner.md` documents how the unused/heavy dependency analysis works.
+- Advanced Commands: `docs/advanced-commands.md` documents flags, the TUI followup menu, and the `/advanced` catalog.
 
 Quick verification commands
 
@@ -97,7 +99,7 @@ feat: add images --optimize flow
 
 Docs-checked: docs/image-command-behavior.md, docs/config-behavior.md
 
-Verification: npx tsc --noEmit; npx eslint .; npx ts-node src/cli.ts images --generate --quality 80
+Verification: npx tsc --noEmit; npx eslint .; npx ts-node src/cli.ts /images --generate --quality 80
 
 Final note
 
